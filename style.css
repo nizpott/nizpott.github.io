@@ -1,5 +1,5 @@
 body {
-  background-color: green;
+  background-color: blue;
 }
 /* General */
 
@@ -30,7 +30,7 @@ body {
   margin-top: 5px;
 }
 
-.menu  li {
+.menu > li {
   display: inline;
   padding-left: 20px;
   padding-right: 20px;
