@@ -1,4 +1,4 @@
-.item img {
+.carousel-inner > .item > img {
   height:500px;
   margin:auto;
 }
