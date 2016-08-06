@@ -1,8 +1,7 @@
+body {
+  font-family: Lato, sans-serif;
+}
 .carousel-inner img {
   width: 100%; /* Set width to 100% */
   margin: auto;
-}
-
-.carousel-caption h1 {
-  vertical-align: middle !important;
 }
