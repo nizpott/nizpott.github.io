@@ -4,5 +4,5 @@
 }
 
 .carousel-caption h1 {
-  vertical-align: middle;
+  vertical-align: middle !important;
 }
