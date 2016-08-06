@@ -5,7 +5,6 @@ body {
   width: 100%; /* Set width to 100% */
   margin: auto;
 }
-.carousel-caption {
-  display: flex !important;
-  align-items: center !important;
+.carousel-caption h1 {
+  align-self:center;
 }
