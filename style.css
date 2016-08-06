@@ -3,6 +3,6 @@
   margin: auto;
 }
 
-.carousel-caption {
+.carousel-inner > item {
   vertical-align: middle;
 }
