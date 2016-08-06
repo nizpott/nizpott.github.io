@@ -9,3 +9,6 @@ body {
 .iconos {
   font-size:125px;
 }
+#iconos {
+  background-color:blue;
+}
