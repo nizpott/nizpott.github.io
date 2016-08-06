@@ -3,3 +3,6 @@
   margin: auto;
 }
 
+.carousel-caption {
+  vertical-align: middle;
+}
