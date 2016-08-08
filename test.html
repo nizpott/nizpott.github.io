@@ -6,9 +6,9 @@
   	<meta name="viewport" content="width=device-width, initial-scale=1"> <!-- for mobile device -->
   	<link rel="stylesheet" type="text/css" href="style.css"/> <!-- CSS Style -->
  	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"> <!-- Bootstrap -->
-    <link href="http://fonts.googleapis.com/css?family=Lato" rel="stylesheet" type="text/css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+ 	<link href="http://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" type="text/css">
+ 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+ 	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
  </head>
  <body>
     <nav id='nav' class="navbar navbar-default navbar-fixed-top">
@@ -89,23 +89,36 @@
  	 </div>
  	</div>
  	<div id='formularioComentario' class='conteiner'> 
-        <from class='form-horizontal' role='from'>
+        <from class="form-horizontal" role='form'>
             <div class='form-group'>
-                <label class='control-labe' for='name'>Name:</label>
-                <imput class="form-control" id='name' type='text' placeholder='Name'>
+                <label class="control-label col-sm-5" for='name'>Name:</label>
+                <div class="col-sm-3">
+                    <imput class="form-control" id='name' type='text'><br>
+                </div>
+                <div class="col-sm-4"></div>
             </div>
             <div class='form-group'>
-                <label class='control-label' for='email'>Email:</label>
-                <imput class="form-control" id='email' type='text' placeholder='Email'>
+                <label class="control-label col-sm-5" for='email'>Email:</label>
+                <div class="col-sm-3">
+                    <imput class="form-control" id='email' type='text' placeholder='Email'><br>
+                </div>
+                <div class="col-sm-4"></div>
             </div>
             <div class='form-group'>
-                <label class='control-label' for='website'>Website (Optional):</label>
-                <imput class="form-control" id='website' type='text' placeholder='Website'>
+                <label class="control-label col-sm-5" for='website'>Website (Optional):</label>
+                <div class="col-sm-3">
+                    <imput class="form-control" id='website' type='text' placeholder='Website'><br>
+                </div>
+                <div class="col-sm-4"></div>
             </div>
             <div class='form-group'>
-                 <label class='control-label' for='comment'>Coment:</label>
-                 <textarea id='comment' name='comment' rows='5' cols='40'></textarea>
+                <label class="control-label col-sm-5" for='comment'>Coment:</label>
+                <div class="col-sm-3">
+                    <textarea id='comment' name='comment' rows='5' cols='40'></textarea><br>
+                </div>
+                <div class="col-sm-4"></div>
             </div>
+            <div class='text-center'><button type="submit" class="btn btn-success">Submit</button></div>
         </from>
     </div>
 </body>
