@@ -12,16 +12,23 @@
  </head>
  <body>
     <nav id='nav' class="navbar navbar-default navbar-fixed-top">
-        <div class="container-fluid">
+        <div class="container">
             <div class='navbar-header'>
                 <a class='navbar-brand' href='http://nizpott.hol.es/'>Nizpott Store</a>
+                <button type='button' class="navbar-toggle" data-toggle="collapse" data-target="#navbar1">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
             </div>
-            <ul class='nav navbar-nav navbar-right'>
-                <li class='active'><a href='#'>Home</a></li>
-                <li><a href='#'>Second</a></li>
-                <li><a href='Comment/LeaveYourComment.php'>Comment</a></li>
-                <li><a href='#'>About us</a></li>
-            </ul>
+            <div class='collapse navbar-collapse' id='navbar1'>
+                <ul class='nav navbar-nav navbar-right'>
+                    <li class='active'><a href='#'>Home</a></li>
+                    <li><a href='#'>Second</a></li>
+                    <li><a href='Comment/LeaveYourComment.php'>Comment</a></li>
+                    <li><a href='#'>About us</a></li>
+                </ul>
+            </div>
         </div>
     </nav> 
  	<div id='firstCarousel' class='carousel slide' data-ride="carousel"> <!-- carousel -->
@@ -88,38 +95,18 @@
  	        </div>
  	 </div>
  	</div>
- 	<div id='formularioComentario' class='conteiner'> 
-        <from class="form-horizontal" role='form'>
-            <div class='form-group'>
-                <label class="control-label col-sm-5" for='name'>Name:</label>
-                <div class="col-sm-3">
-                    <imput class="form-control" id='name' type='text'><br>
-                </div>
-                <div class="col-sm-4"></div>
-            </div>
-            <div class='form-group'>
-                <label class="control-label col-sm-5" for='email'>Email:</label>
-                <div class="col-sm-3">
-                    <imput class="form-control" id='email' type='text' placeholder='Email'><br>
-                </div>
-                <div class="col-sm-4"></div>
-            </div>
-            <div class='form-group'>
-                <label class="control-label col-sm-5" for='website'>Website (Optional):</label>
-                <div class="col-sm-3">
-                    <imput class="form-control" id='website' type='text' placeholder='Website'><br>
-                </div>
-                <div class="col-sm-4"></div>
-            </div>
-            <div class='form-group'>
-                <label class="control-label col-sm-5" for='comment'>Coment:</label>
-                <div class="col-sm-3">
-                    <textarea id='comment' name='comment' rows='5' cols='40'></textarea><br>
-                </div>
-                <div class="col-sm-4"></div>
-            </div>
-            <div class='text-center'><button type="submit" class="btn btn-success">Submit</button></div>
-        </from>
-    </div>
+ 	<div id='footer' class='conteiner-fluid'>
+ 	    <div class='row'>
+ 	        <div class='col-sm-2'></div>
+ 	        <div class='col-sm-3'>
+ 	            <h4>Some text</h4>
+ 	        </div>
+ 	        <div class='col-sm-2'></div>
+ 	        <div class='col-sm-3'>
+ 	            <h4>Some text</h4>
+ 	        </div>
+ 	        <div class='col-sm-2'></div>
+ 	    </div>
+ 	</div>
 </body>
 </html>
