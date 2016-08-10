@@ -1,19 +1,23 @@
 body {
-  font-family: Verdana, sans-serif;
+    font-family: Verdana, Sans-serif;
 }
 .carousel-inner img {
   width: 100%; /* Set width to 100% */
-  margin: auto;
+  margin: 0px;
 }
 .iconos {
-  font-size:125px;
+  font-size:75px;
 }
 #iconos {
-  background-color:#005ce6;
-  color:white;
+    padding:50px;
 }
-.navbar {
-  background-color:#005ce6 !important;
-  color:white !important;
-  border:0;
+#footer {
+  background-color: #f4511e;
+  color: white;
+}
+#nav {
+  z-index: 9999; /* sobre cualquier otro elemento */
+}
+.footerPart {
+  padding:20px;
 }
