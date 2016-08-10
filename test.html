@@ -95,10 +95,10 @@
  	        </div>
  	 </div>
  	</div>
- 	<div id='footer' class='conteiner'>
- 	    <div class='row'>
- 	        <div class='col-sm-3'>
- 	            <h5><b>Quick Links</b></h5><br>
+ 	<div id='footer' class='container-fluid'>
+ 	    <div id='footerPart' class='row'>
+ 	        <div class='col-md-3'>
+ 	            <h5><b> Quick Links</b></h5><br>
  	            <ul>
  	                <li>Source Code on Github</li>
  	                <li>API Documentation</li>
@@ -107,8 +107,8 @@
  	                <li>Wiki</li>
  	            </ul>
  	        </div>
- 	        <div class='col-sm-3'>
- 	            <h5><b>Videos</b></h5>
+ 	        <div class='col-md-3'>
+ 	            <h5><b> Videos</b></h5>
  	            <ul>
  	                <li>Introducing Brackets</li>
  	                <li>Live Development for HTML</li>
@@ -117,8 +117,8 @@
  	                <li>Brackets Videos on Youtube</li>
  	            </ul>
  	        </div>
- 	        <div class='col-sm-3'>
- 	            <h5><b>Get Involved</b></h5>
+ 	        <div class='col-md-3'>
+ 	            <h5><b> Get Involved</b></h5>
  	            <ul>
  	                <li>Suggest a Feature</li>
  	                <li>View Backlog on Trello</li>
@@ -128,8 +128,8 @@
  	                <li>Checkout Current Issues on GitHub</li>
  	            </ul>
  	        </div>
- 	        <div class='col-sm-3'>
- 	            <h5><b>Keep in Touch</b></h5>
+ 	        <div class='col-md-3'>
+ 	            <h5><b> Keep in Touch</b></h5>
  	            <ul>
  	                <li>Twitter</li>
  	                <li>Facebook</li>
@@ -140,7 +140,10 @@
  	    </div>
  	    <div class='row text-center'>
  	        <p><b>This page is just for testing</b></p>
- 	        <p>&copy; <?php echo date("Y");?></p>
+ 	        <p>
+ 	            &copy; <?php echo date("Y"). ' A.K.';?><br>
+ 	            Today is: <?php echo date("l")." ". date("d/m/Y"); ?>
+ 	        </p>
  	    </div>
  	</div>
 </body>
