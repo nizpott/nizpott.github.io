@@ -1,23 +1,38 @@
 body {
     font-family: Verdana, Sans-serif;
 }
+/* ----------------------------- nav */
+#nav {
+  z-index: 9999; /* sobre cualquier otro elemento */
+  opacity: 0.7;
+  border: 0;
+  background-color: #00cc66;
+}
+.navbar li a, .navbar .navbar-brand {
+    color: #fff !important;
+}
+.navbar-nav li a:hover, .navbar-nav li.active a {
+    color: #00cc66!important;
+    background-color: #fff !important;
+}
+/* ----------------------------- carousel */
 .carousel-inner img {
   width: 100%; /* Set width to 100% */
   margin: 0px;
 }
+/* ----------------------------- iconos */
 .iconos {
   font-size:75px;
 }
 #iconos {
     padding:50px;
+    color:#00cc66;
 }
-#footer {
-  background-color: #f4511e;
-  color: white;
-}
-#nav {
-  z-index: 9999; /* sobre cualquier otro elemento */
-}
+/* ----------------------------- footer */
 .footerPart {
   padding:20px;
+}
+#footer {
+  background-color: #00cc66;
+  color: white;
 }
