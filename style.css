@@ -1,5 +1,7 @@
 body {
-    font-family: Verdana, Sans-serif;
+    font-family: Roboto, Sans-serif;
+    /* padding-top:50px; para no superponer la navbar */
+  overflow-x:hidden;
 }
 /* ----------------------------- nav */
 #nav {
@@ -20,19 +22,137 @@ body {
   width: 100%; /* Set width to 100% */
   margin: 0px;
 }
+.carousel-control.right, .carousel-control.left {
+  color: #00cc66;
+}
+.carousel-indicators li {
+  border-color: #00cc66;
+}
+.carousel-indicators li.active {
+  background-color: #00cc66;
+}
+/* ----------------------------- COMPANY DESCRIPTION */
+#About {
+  display: flex;
+  padding: 30px;
+}
 /* ----------------------------- iconos */
 .iconos {
   font-size:75px;
 }
 #iconos {
-    padding:50px;
-    color:#00cc66;
+  color:#00cc66;
+  padding: 30px;
+}
+/* ----------------------------- PRODUCTS */
+#Products {
+  padding-top: 60px;
+}
+.panel {
+  transition: box-shadow 0.5s;
+  border-radius: 0px;
+  border: 1px solid #00cc66;
+}
+.panel:hover {
+  box-shadow: 5px 5px 10px #000000;
+
+}
+.panel-heading {
+  border-radius: 0px;
+  background-color: #00cc66;
+  color: #ffffff;
+}
+.panel-body {
+  color:#00cc66;
+}
+#btn-buy {
+  background-color: #00cc66;
+  color: #ffffff;
+  border-radius: 0px;
+}
+#btn-buy:hover {
+  background-color: #ffffff;
+  color: #00cc66;
+}
+/* ----------------------------- comentarios */
+#Contact {
+   padding: 30px;
+   color: #00cc66;
+}
+#link:hover {
+  color:#00cc66; 
+}
+/* ----------------------------- MAPS */
+#googleMap {
+  height: 400px;
+}
+#mapsContainer {
+  padding-bottom: 30px;
 }
 /* ----------------------------- footer */
-.footerPart {
-  padding:20px;
-}
 #footer {
+  padding: 5px;
   background-color: #00cc66;
   color: white;
+  margin: auto;
 }
+.smallFont{
+  font-size:11px;
+}
+#ScrollUp {
+  border-radius: 100%;
+  width: 40px !important;
+  height: 40px !important;
+  background-color: rgba(0,0,0,0.5);
+  color: #ffffff;
+  display: inline-block;
+  text-align: center;
+  vertical-align: middle !important;
+  margin: 0px !important;
+  padding: 0px !important;
+}
+/* ----------------------------- OTHER */
+.logo {
+  font-size: 100px;
+}
+.putColor {
+  color:#00cc66;
+}
+.red {
+  color: #ff0000;
+}
+.alert-danger, .alert-success {
+  position: fixed;
+  z-index: 9998; /* sobre cualquier otro elemento */
+  bottom: 0px;
+  text-align: center;
+  width: 100%;
+}
+@media (max-width: 600px) {
+  .carousel-caption {
+    display: none; /* Hide the carousel text when the screen is less than 600 pixels wide */
+  }
+  .logo {
+    font-size: 50px !important;
+  }
+}
+/* ----------------------------- ANIMACIONES */
+.slideAnim {
+  visibility:hidden;
+}
+.slideUp {
+  animation-name: slide;
+  animation-duration: 1.2s;
+  visibility: visible;
+}
+@keyframes slide {
+  0% {
+    opacity: 0;
+    -webkit-transform: translateY(70%);
+  }
+  100% {
+    opacity: 1;
+    -webkit-transform: translateY(0%);
+  }
+}
+  
