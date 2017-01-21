@@ -1,95 +1,370 @@
- <!DOCTYPE html>
- <html lang='en'>
- <head>
- 	<title>Nizpott</title>
- 	<meta charset="utf-8">
-  	<meta name="viewport" content="width=device-width, initial-scale=1"> <!-- for mobile device -->
-  	<link rel="stylesheet" type="text/css" href="style.css"/> <!-- CSS Style -->
- 	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"> <!-- Bootstrap -->
-    <link href="http://fonts.googleapis.com/css?family=Lato" rel="stylesheet" type="text/css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
- </head>
- <body>
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <title>Nizpott</title>
+  <meta charset="ISO-8859-1">
+  <meta name="viewport" content="width=device-width, initial-scale=1"> <!-- for mobile device -->
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"> <!-- Bootstrap css -->
+  <link rel="stylesheet" type="text/css" href="style.css"/> <!-- CSS Style -->
+  <link href="http://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" type="text/css"> <!-- Add font Roboto -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script> <!-- JQuery library -->
+  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> <!-- Bootstrap js -->
+  <script type="text/javascript" src="app.js"></script> <!-- Add scripts (google maps, jquery, scroll, etc) -->
+  <script src="http://maps.googleapis.com/maps/api/js"></script> <!-- Add Google Maps -->
+</head>
+<body id="Home" data-spy="scroll" data-target=".navbar" data-offset="50">
+  <?php
+// define variables and set to empty values
+$name = $email = $website = $comment = "";
+$nameError = $emailError = $websiteError = $commentError = "";
+$nameOk = $emailOk = $websiteOk = $commentOk = false;
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+  // name is ok?
+  if (empty($_POST["name"])) {
+    $nameError = "Name is required";
+  } else {
+    $name = test_input($_POST["name"]);
+    // check if name only contains letters and whitespace
+    if (!preg_match("/^[a-zA-Z ]*$/",$name)) {
+      $nameError = "Only letters and white space allowed"; 
+    } else {
+      $nameOk = true;
+    }
+  }
+  // email is ok?
+  if (empty($_POST["email"])) {
+    $emailError = "Email is required";
+  } else {
+    $email = test_input($_POST["email"]);
+    // check if e-mail address is well-formed
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+      $emailError = "Invalid email format"; 
+    } else {
+      $emailOk = true;
+    }
+  }
+  // website is ok?
+  if (empty($_POST["website"])) {
+    $websiteOk = true;
+  } else {
+    $website = test_input($_POST["website"]);
+    // check if URL address syntax is valid (this regular expression also allows dashes in the URL)
+    if (!preg_match("/\b(?:(?:https?|ftp):\/\/|www\.)[-a-z0-9+&@#\/%?=~_|!:,.;]*[-a-z0-9+&@#\/%=~_|]/i",$website)) {
+      $websiteError = "Invalid URL (must start with http://)"; 
+    } else {
+      $websiteOk = true;
+    }
+  }
+  // there is a comment?
+  if (empty($_POST["comment"])) {
+    $commentError = "The comment is empty";
+  } else {
+    $comment = test_input($_POST["comment"]);
+    $commentOk = true;
+  }
+  // CHECK AND INSERT DATA INTO DATABASE
+  if ($nameOk && $emailOk && $websiteOk && $commentOk) {
+    $servername = "localhost";
+    $username = "u321240512_user";
+    $password = "mypassword";
+    $dbname = "u321240512_comme";
+
+    // Create connection
+    //REMPLAZANDO MYSQLI POR PDO $conn = new mysqli($servername, $username, $password, $dbname);
+    try {
+      $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+      // set the PDO error mode to exception
+      $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    }
+    catch(PDOException $e) {
+      echo "Connection failed: " . $e->getMessage();
+    }
+    /*REMPLAZANDO MYSQLI POR PDO// Check connection
+    if ($conn->connect_error) {
+      die("Connection failed: " . $conn->connect_error);
+    } */
+    
+    // Insertando:
+    $sql = "INSERT INTO comments (name, email, website, comment) VALUES ('$name', '$email', '$website', '$comment')";
+    /*NO FUNCIONA LA PREPARACION $sql = $dbd->prepare("INSERT INTO comments (name, email, website, comment) VALUES (?, ?, ?, ?)");
+    $sql ->bindParam(1, $name);
+    $sql ->bindParam(2, $email);
+    $sql ->bindParam(3, $website);
+    $sql ->bindParam(4, $comment);*/
+
+    try {
+      // use exec() because no results are returned
+      $conn->exec($sql);
+      echo "<div class='alert alert-success fade in'>
+      <a href='#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>
+      <strong>Success!</strong> Your comment has been submited, you can see it <a href='http://nizpott.hol.es/Comment/index.php'>here</a>. Thanks.
+      </div>";
+    }
+    catch(PDOException $e) {
+      echo $sql . ": " . $e->getMessage();
+    }
+    $conn = null;
+
+    /*REMPLAZANDO MYSQLI POR PDO if ($conn->query($sql) === true) {
+      echo "<div class='alert alert-success fade in'>
+      <a href='#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>
+      <strong>Success!</strong> Your comment has been submited, you can see it <a href='http://nizpott.hol.es/Comment/index.php'>here</a>. Thanks.
+      </div>";
+    } else {
+      echo "<div class='alert alert-danger fade in'>
+      <a href='#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>
+      <strong>Error: </strong>
+    </div>" . $sql . "<br>" . $conn->error;
+    }
+
+    $conn->close();*/
+  } else {
+    echo "<div class='alert alert-danger fade in'>
+      <a href='#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>
+      <strong>Error: </strong>Check the input fields.
+    </div>";
+  } // END INSERT DATA
+}
+
+  function test_input($data) {
+    $data = trim($data);
+    $data = stripslashes($data);
+    $data = htmlspecialchars($data);
+    return $data;
+  }             
+  ?>
     <nav id='nav' class="navbar navbar-default navbar-fixed-top">
-        <div class="container-fluid">
+        <div class="container">
             <div class='navbar-header'>
-                <a class='navbar-brand' href='#'>Nizpott Store</a>
+                <a class='navbar-brand' href='http://nizpott.hol.es/'><span class="glyphicon glyphicon-send smallLogo"></span> Nizpott Systems</a>
+                <button type='button' class="navbar-toggle" data-toggle="collapse" data-target="#navbar1">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
             </div>
-            <ul class='nav navbar-nav navbar-right'>
-                <li class='active'><a href='#'>Home</a></li>
-                <li><a href='#'>Second</a></li>
-                <li><a href='#'>Third</a></li>
-                <li><a href='#'>About us</a></li>
-            </ul>
+            <div class='collapse navbar-collapse' id='navbar1'>
+                <ul class='nav navbar-nav navbar-right'>
+                    <li class='active'><a href='#Home'>Home</a></li>
+                    <li><a href='#About'>About us</a></li>
+                    <li><a href='#Products'>Products</a></li>
+                    <li><a href='#Contact'>Contact</a></li>
+                </ul>
+            </div>
         </div>
     </nav> 
- 	<div id='firstCarousel' class='carousel slide' data-ride="carousel"> <!-- carousel -->
- 		<!-- Indicators -->
- 		<ol class="carousel-indicators">
- 			<li data-target="#firstCarousel" data-slide-to='0' class="active"></li>
- 			<li data-target="#firstCarousel" data-slide-to='1'></li>
- 			<li data-target="#firstCarousel" data-slide-to='2'></li>
- 			<li data-target="#firstCarousel" data-slide-to='3'></li>
-   		</ol>
- 	  	<!-- Content -->
-   		<div class='carousel-inner' role='listbox'>
-   		    <div id='carouselImage1' class='item active'>
-   		        <img src='http://i.imgur.com/Jhji1gq.jpg' widht='1280px' height='720px'>
-   		        <div class="carousel-caption">
-   		            <h1>Welcome to the technology of the future</h1>
-   		        </div>
- 		 	</div>
-    		<div id='carouselImage2' class='item'>
- 			    <img src='http://i.imgur.com/mpYowOE.jpg' widht='1280px' height='720px'>
- 			    <div class="carousel-caption">
-   		            <h1>The best software for your company</h1>
-   		        </div>
-    		</div>
- 			<div id='carouselImage3' class='item'>
-     			<img src='http://i.imgur.com/MmmyxBW.jpg' widht='1280px' height='720px'>
-     			<div class="carousel-caption">
-   		            <h1>From Argentina to the entire world</h1>
-   		        </div>
- 			</div>
- 			<div id='carouselImage4' class='item'>
- 				<img src='http://i.imgur.com/un1UwJs.jpg' widht='1280px' height='720px'>
- 				<div class="carousel-caption">
-   		            <h2>Ours servers have all the security you need</h2>
-   		        </div>
- 			</div>
- 		</div>
- 		<!-- left and right controls -->
-   		<a class='left carousel-control' href='#firstCarousel' role='button' data-slide='prev'>
-    			<span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
- 			<span class="sr-only">Previous</span>
- 		</a>
- 		<a class='right carousel-control' href='#firstCarousel' role='button' data-slide='next'>
- 			<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
- 			<span class="sr-only">Next</span>
- 		</a>
- 	</div>
- 	<div id='iconos' class='container-fluid text-center'>          <!-- iconos -->
- 	 <div class='row'>
- 	        <div class='col-sm-4'>
- 	                <h1 class="iconos"><span class="glyphicon glyphicon-off"></span></h1>
- 	                <h3>POWER</h3><br>
- 	                <p>We build one of the most powerfull software</p>
- 	        </div>
- 	        <div class='col-sm-4'>
- 	                <h1 class='iconos'><span class="glyphicon glyphicon-leaf"></span></h1>
- 	                <h3>ECOLOGIC</h3><br>
- 	                <p>Ours products saves energy</p>
- 	        </div>
- 	        <div class='col-sm-4'>
- 	                <h1 class='iconos'><span class="glyphicon glyphicon-wrench"></span></h1>
- 	                <h3>HARD WORK</h3><br>
- 	                <p>Support 24 hours</p>
- 	        </div>
- 	 </div>
- 	</div>
- 	<div id='company' class='container-fluid text-center'>
- 	    
- 	</div>
- </body>
- </html>
+  <div id='firstCarousel' class='carousel slide' data-ride="carousel"> <!-- carousel -->
+    <!-- Indicators -->
+    <ol class="carousel-indicators">
+      <li data-target="#firstCarousel" data-slide-to='0' class="active"></li>
+      <li data-target="#firstCarousel" data-slide-to='1'></li>
+      <li data-target="#firstCarousel" data-slide-to='2'></li>
+      <li data-target="#firstCarousel" data-slide-to='3'></li>
+      </ol>
+      <!-- Content -->
+      <div class='carousel-inner' role='listbox'>
+          <div id='carouselImage1' class='item active'>
+              <img src='http://i.imgur.com/Jhji1gq.jpg' widht='1280px' height='720px'>
+              <div class="carousel-caption">
+                  <h1>Welcome to the technology of the future</h1>
+              </div>
+      </div>
+        <div id='carouselImage2' class='item'>
+          <img src='http://i.imgur.com/mpYowOE.jpg' widht='1280px' height='720px'>
+          <div class="carousel-caption">
+                  <h1>The best software for your company</h1>
+              </div>
+        </div>
+      <div id='carouselImage3' class='item'>
+          <img src='http://i.imgur.com/MmmyxBW.jpg' widht='1280px' height='720px'>
+          <div class="carousel-caption">
+                  <h1>From Argentina to the entire world</h1>
+              </div>
+      </div>
+      <div id='carouselImage4' class='item'>
+        <img src='http://i.imgur.com/un1UwJs.jpg' widht='1280px' height='720px'>
+        <div class="carousel-caption">
+                  <h2>Ours servers have all the security you need</h2>
+              </div>
+      </div>
+    </div>
+    <!-- left and right controls -->
+      <a class='left carousel-control' href='#firstCarousel' role='button' data-slide='prev'>
+          <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+      <span class="sr-only">Previous</span>
+    </a>
+    <a class='right carousel-control' href='#firstCarousel' role='button' data-slide='next'>
+      <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+      <span class="sr-only">Next</span>
+    </a>
+  </div>
+  <div class="container" id="About"> <!--                           COMPANY DESCRIPTION -->
+    <div class="row">
+      <div class="col-md-6 text-center putColor">
+          <h1 class="logo"><span class="glyphicon glyphicon-send"></span><br>NIZPOTT</h1><br>
+          <h2>SYSTEMS</h2>
+        </div>
+        <div class="col-md-6">
+          <h1 class="putColor">Who we are?</h1><br>
+          <h4>Nizpott Systems is a global company based in Buenos Aires, mainly engaged in the sale and maintenance of software and servers. It also manufactures connecting devices for computer networks: routers, switches and hubs.<br>
+          Nizpott Systems es una empresa global con sede en Buenos Aires, principalmente dedicada a la venta y mantenimiento de software y servidores. Además fabrica dispositivos de conexión para redes informáticas: routers, switches y hubs
+          </h4>
+        </div>
+    </div>
+  </div>
+  <div id='iconos' class='container-fluid text-center'>                                            <!-- iconos -->
+   <div class='row slideAnim'>
+          <div class='col-sm-4'>
+                  <h1 class="iconos"><span class="glyphicon glyphicon-globe"></span></h1>
+                  <h3>INTERNATIONAL</h3><br>
+                  <p>We build the most powerfull software of the world</p>
+          </div>
+          <div class='col-sm-4'>
+                  <h1 class='iconos'><span class="glyphicon glyphicon-leaf"></span></h1>
+                  <h3>ECOLOGIC</h3><br>
+                  <p>Ours products saves energy</p>
+          </div>
+          <div class='col-sm-4'>
+                  <h1 class='iconos'><span class="glyphicon glyphicon-wrench"></span></h1>
+                  <h3>HARD WORK</h3><br>
+                  <p>Support 24 hours</p>
+          </div>
+   </div>
+  </div>
+
+  <div id="Products" class="container-fluid">                <!-- PRODUCTS -->
+    <div class="row">
+      <div class="col-md-2 col-sm-0"></div>
+      <div class="col-md-4 col-sm-6">
+        <div class="panel text-center">
+          <div class="panel-heading">
+            <h1>Premium Soft</h1>
+          </div>
+          <div class="panel-body">
+            <h3>The best software</h3><br>
+            <h4>100 mb/s speed</h4><br>
+            <h4>Unlimited storage</h4><br>
+            <h1>$499</h1><br>
+            <a href="" id="btn-buy" class="btn btn-default"><span class="glyphicon glyphicon-shopping-cart"></span> BUY</a>
+          </div>
+        </div>  
+      </div>
+      <div class="col-md-4 col-sm-6">
+        <h1>Buy our Primium Software</h1><br>
+        <h4>Primium Software is available for OS X, Windows and Linux. One license is all you need to use our Primium Software on every computer you own, no matter what operating system it uses.<br><br>Software uses a custom UI toolkit, optimized for speed and beauty, while taking advantage of native functionality on each platform.<br><br>
+        Projects in Premium capture the full contents of the workspace, including modified and unsaved files. You can switch between projects in a manner similar to Goto Anything, and the switch is instant, with no save prompts - all your modifications will be restored next time the project is opened.</h4>
+      </div>
+      <div class="col-md-2 col-sm-0"></div>
+    </div>
+  </div>
+
+  <div id='Contact' class='conteiner'>                <!-- COMENT -->
+      <div class='text-center'>
+        <h2>Contact</h2><br>
+        <h4>Your comment is important to us</h4>
+      </div>
+        <form class="form-horizontal slideAnim" role='form' method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
+            <div class='form-group'>
+                <label class="control-label col-sm-5" for='name'>Name:</label>
+                <div class="col-sm-4">
+                    <input class="form-control" name="name" id='name' type='text' placeholder='Enter your name' value="<?php echo $name;?>">
+                </div>
+                <div class="col-sm-3"><span class="red"><?php echo $nameError;?></span></div>
+            </div>
+            <div class='form-group'>
+                <label class="control-label col-sm-5" for='email'>Email:</label>
+                <div class="col-sm-4">
+                    <input class="form-control" name='email' id='email' type='text' placeholder='Enter email' value="<?php echo $email;?>">
+                </div>
+                <div class="col-sm-3"><span class="red"><?php echo $emailError;?></span></div>
+            </div>
+            <div class='form-group'>
+                <label class="control-label col-sm-5" for='website'>Website (Optional):</label>
+                <div class="col-sm-4">
+                    <input class="form-control" name='website' id='website' type='text' placeholder='http://yourwebsite.com/' value="<?php echo $website;?>">
+                </div>
+                <div class="col-sm-3"><span class="red"><?php echo $websiteError;?></span></div>
+            </div>
+            <div class='form-group'>
+                <label class="control-label col-sm-5" for='comment'>Comment:</label>
+                <div class="col-sm-4">
+                    <textarea class="form-control" id='comment' name='comment' rows='5' placeholder='Add your comment here'><?php echo $comment;?></textarea>
+                </div>
+                <div class="col-sm-3"><p class="counter">140</p><span class="red"><?php echo $commentError;?></span></div>
+            </div>
+            <div class='row text-center'><button id="submitButton" type="submit" name="submit" class="btn btn-success">Send</button><br><a id="link" class="putColor" href="Comment/index.php">See last comments here.</a></div>
+        </from>
+    </div>
+  <div id="mapsContainer" class="container-fluid text-center">                                                 <!-- maps container -->
+    <h2 class="putColor">Where we are?</h2>
+    <div class="row">
+      <div class="col-md-2 col-sm-0"></div>
+      <div id="googleMap" class='col-md-8 col-sm-12'></div>
+      <div class="col-md-2 col-sm-0"></div>
+    </div>    
+  </div>
+  <div id='footer' class='container-fluid'>
+      <!--<div class="text-center">
+        <a href="#Home">
+          <div id="ScrollUp">
+            <span class="glyphicon glyphicon-chevron-up"></span>
+          </div>
+        </a>
+      </div>
+      -->
+      <div class='row'>
+          <div class='col-lg-2 col-md-0'></div>
+          <div class='col-lg-2 col-md-3'>
+              <h5><b> Quick Links</b></h5>
+              <ul class='smallFont'>
+                  <li>Source Code on Github</li>
+                  <li>API Documentation</li>
+                  <li>Weekly Extension Updates</li>
+                  <li>Troubleshooting Help</li>
+                  <li>Wiki</li>
+              </ul>
+          </div>
+          <div class='col-lg-2 col-md-3'>
+              <h5><b> Videos</b></h5>
+              <ul class='smallFont'>
+                  <li>Introducing Brackets</li>
+                  <li>Live Development for HTML</li>
+                  <li>JavaScript Debugger for Brackets</li>
+                  <li>Tuts+ Introduction to Brackets</li>
+                  <li>Brackets Videos on Youtube</li>
+              </ul>
+          </div>
+          <div class='col-lg-2 col-md-3'>
+              <h5><b> Get Involved</b></h5>
+              <ul class='smallFont'>
+                  <li>Suggest a Feature</li>
+                  <li>View Backlog on Trello</li>
+                  <li>Track Our Progress on Waffle</li>
+                  <li>Discuss on Google Groups</li>
+                  <li>Chat on IRC at Freenode/#Brackets</li>
+                  <li>Checkout Current Issues on GitHub</li>
+              </ul>
+          </div>
+          <div class='col-lg-2 col-md-3'>
+              <h5><b> Keep in Touch</b></h5>
+              <ul class='smallFont'>
+                  <li>Twitter</li>
+                  <li>Facebook</li>
+                  <li>Google+</li>
+                  <li>Instagram</li>
+              </ul>
+          </div>
+          <div class='col-lg-2 col-md-0'></div>
+      </div>
+      <div class='row text-center'>
+          <p><b>This page is just for testing</b></p>
+          <p>
+              &copy; <?php echo date("Y"). ' A.K.';?><br>
+              Today is: <?php echo date("l")." ". date("d/m/Y"); ?>
+          </p>
+      </div>
+  </div>
+
+</body>
+</html>
