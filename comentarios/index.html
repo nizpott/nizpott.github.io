@@ -1,37 +1,140 @@
-<!DOCTYPE HTML>  
-<html>
+<!DOCTYPE html>
+<html lang='en'>
 <head>
-<style>
-.error {color: #FF0000;}
-</style>
+  <title>Comments - Nizpott</title>
+  <meta charset="ISO-8859-1">
+  <meta name="viewport" content="width=device-width, initial-scale=1"> <!-- for mobile device -->
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"> <!-- Bootstrap css -->
+  <link rel="stylesheet" type="text/css" href="style.css"/> <!-- CSS Style -->
+  <link href="http://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" type="text/css"> <!-- Add font Roboto -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script> <!-- JQuery library -->
+  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> <!-- Bootstrap js -->
 </head>
-<body>  
+<body>
 
+<nav id='nav' class="navbar navbar-default navbar-fixed-top">
+  <div class="container">
+    <div class='navbar-header'>
+      <a class='navbar-brand' href='http://nizpott.hol.es/'><span class="glyphicon glyphicon-send smallLogo"></span> Nizpott Systems</a>
+      <button type='button' class="navbar-toggle" data-toggle="collapse" data-target="#navbar1">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+     </div>
+    <div class='collapse navbar-collapse' id='navbar1'>
+      <ul class='nav navbar-nav navbar-right'>
+        <li><a href='http://nizpott.hol.es/#'>Home</a></li>
+        <li><a href='http://nizpott.hol.es/#About'>About us</a></li>
+        <li><a href='http://nizpott.hol.es/#Products'>Products</a></li>
+        <li><a href='http://nizpott.hol.es/#Contact'>Contact</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
 
+  <div id='table' class="container">
+    <div class="row">
+      <div>
+        <h1 class="text-center">Last 30 comments:</h1>
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Website</th>
+              <th>Comment</th>
+              <th>Fecha de registro</th>
+            </tr>
+          </thead>
+          <tbody>
+            <?php
+              $servername = "localhost";
+              $username = "u321240512_user";
+              $password = "mypassword";
+              $dbname = "u321240512_comme";
 
-<h2>PHP Form Validation Example</h2>
-<p><span class="error">* required field.</span></p>
-<form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">  
-  Name: <input type="text" name="name" value="<?php echo $name;?>">
-  <span class="error">* <?php echo $nameErr;?></span>
-  <br><br>
-  E-mail: <input type="text" name="email" value="<?php echo $email;?>">
-  <span class="error">* <?php echo $emailErr;?></span>
-  <br><br>
-  Website: <input type="text" name="website" value="<?php echo $website;?>">
-  <span class="error"><?php echo $websiteErr;?></span>
-  <br><br>
-  Comment: <textarea name="comment" rows="5" cols="40"><?php echo $comment;?></textarea>
-  <br><br>
-  Gender:
-  <input type="radio" name="gender" <?php if (isset($gender) && $gender=="female") echo "checked";?> value="female">Female
-  <input type="radio" name="gender" <?php if (isset($gender) && $gender=="male") echo "checked";?> value="male">Male
-  <span class="error">* <?php echo $genderErr;?></span>
-  <br><br>
-  <input type="submit" name="submit" value="Submit">  
-</form>
+              // Create connection
+              $conn = new mysqli($servername, $username, $password, $dbname);
+              // Check connection
+              if ($conn->connect_error) {
+                   die("Connection failed: " . $conn->connect_error);
+              } 
 
+              $sql = "SELECT * FROM comments ORDER BY reg_date DESC LIMIT 30";
+              $result = $conn->query($sql);
 
+              if ($result->num_rows > 0) {
+                   // output data of each row
+                   while($row = $result->fetch_assoc()) {
+                       echo "<tr><td>". $row["id"]. "</td><td>". $row["name"]. "</td><td>" . $row["email"] . "</td><td>". $row["website"]."</td><td>" .$row["comment"] ."</td><td>".$row["reg_date"]."</td></tr>";
+                   }
+              } else {
+                   echo "<tr> 0 results </td>";
+              }
+
+              $conn->close();
+              ?>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <footer id='footer' class='container-fluid'>
+      <div class='row flexible'>
+          <div class='col-lg-2 col-md-0'></div>
+          <div class='col-lg-2 col-md-3'>
+              <h5><b> Quick Links</b></h5>
+              <ul class='smallFont'>
+                  <li>Source Code on Github</li>
+                  <li>API Documentation</li>
+                  <li>Weekly Extension Updates</li>
+                  <li>Troubleshooting Help</li>
+                  <li>Wiki</li>
+              </ul>
+          </div>
+          <div class='col-lg-2 col-md-3'>
+              <h5><b> Videos</b></h5>
+              <ul class='smallFont'>
+                  <li>Introducing Brackets</li>
+                  <li>Live Development for HTML</li>
+                  <li>JavaScript Debugger for Brackets</li>
+                  <li>Tuts+ Introduction to Brackets</li>
+                  <li>Brackets Videos on Youtube</li>
+              </ul>
+          </div>
+          <div class='col-lg-2 col-md-3'>
+              <h5><b> Get Involved</b></h5>
+              <ul class='smallFont'>
+                  <li>Suggest a Feature</li>
+                  <li>View Backlog on Trello</li>
+                  <li>Track Our Progress on Waffle</li>
+                  <li>Discuss on Google Groups</li>
+                  <li>Chat on IRC at Freenode/#Brackets</li>
+                  <li>Checkout Current Issues on GitHub</li>
+              </ul>
+          </div>
+          <div class='col-lg-2 col-md-3'>
+              <h5><b> Keep in Touch</b></h5>
+              <ul class='smallFont'>
+                  <li>Twitter</li>
+                  <li>Facebook</li>
+                  <li>Google+</li>
+                  <li>Instagram</li>
+              </ul>
+          </div>
+          <div class='col-lg-2 col-md-0'></div>
+      </div>
+      <div class='row text-center'>
+          <p><b>This page is just for testing</b></p>
+          <p>
+              &copy; <?php echo date("Y"). ' A.K.';?><br>
+              Today is: <?php echo date("l")." ". date("d/m/Y"); ?>
+          </p>
+      </div>
+  </footer>
 
 </body>
 </html>
