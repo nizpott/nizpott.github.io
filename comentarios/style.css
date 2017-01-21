@@ -1,0 +1,36 @@
+body {
+    font-family: Roboto, Sans-serif;
+    padding-top:50px; /* para no superponer la navbar */
+}
+/* ----------------------------- nav */
+#nav {
+  z-index: 9999; /* sobre cualquier otro elemento */
+  opacity: 0.7;
+  border: 0;
+  background-color: #00cc66;
+}
+.navbar li a, .navbar .navbar-brand {
+    color: #fff !important;
+}
+.navbar-nav li a:hover, .navbar-nav li.active a {
+    color: #00cc66!important;
+    background-color: #fff !important;
+}
+/* ----------------------------- TABLE */
+#table {
+  padding: 20px;
+}
+/* ----------------------------- footer */
+#footer {
+  padding: 5px;
+  background-color: #00cc66;
+  color: white;
+  margin: auto;
+}
+.smallFont{
+  font-size:11px;
+}
+/* ----------------------------- OTHER */
+.putColor {
+  color:#00cc66;
+}
