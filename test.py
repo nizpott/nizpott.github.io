@@ -64,10 +64,7 @@ def life_crear(mapa):
     for fila in mapa:
         aux = []
     	for celda in fila:
-    	    if celda == '#':
-    	        aux.append(True)
-    	    else:
-    	        aux.append(False)
+			aux.append(celda == '#')
     	resultado.append(aux)
     return resultado
 
@@ -96,7 +93,7 @@ def life_mostrar(life):
     for fila in life:
         aux = ""
     	for celda in fila:
-    	    if celda == True:
+    	    if celda:
     	        aux += '#'
     	    else:
     	        aux += '.'
@@ -128,32 +125,31 @@ def cant_adyacentes(life, f, c):
 	for x,fila in enumerate(life):
 		if x == f:
 			# Cantidad en la misma fila
-			cantidad += chequear_fila(fila,c,False)
+			cantidad += chequear_fila(fila,c,)
 		if (x+1) == f:
 			# Cantidad en la fila inferior
-			cantidad += chequear_fila(fila,c,True)
+			cantidad += chequear_fila(fila,c)
 			# Si es la ultima fila verificamos la primera
 			if f == (cant_filas-1):
 				aux = life[0]
-				cantidad += chequear_fila(aux,c,True)
+				cantidad += chequear_fila(aux,c)
 		if (x-1) == f:
 			# Cantidad en la fila superior
-			cantidad += chequear_fila(fila,c,True)
+			cantidad += chequear_fila(fila,c)
 			# Si es la primer fila verificamos la ultima
 			if f == 0:
 				aux = life[cant_filas-1]
-				cantidad += chequear_fila(aux,c,True)
-	return cantidad
+				cantidad += chequear_fila(aux,c)
+	return cantidad - 1
 
-def chequear_fila(fila,c,contar_esta):
+def chequear_fila(fila,c):
 	"""
 	Verifica y cuenta la cantidad de celulas vivas alrededor de una celda 'c' en una fila 'fila'.
-	Recibe por parametro 'contar_esta' (bool) para decidir si es necesario contar la celda que se encuentra en la posición 'c'.
 	"""
 	largo_de_la_fila = len(fila)
 	cantidad = 0
 	for i,celda in enumerate(fila):
-		if (contar_esta) and (i == c):
+		if i == c:
 			if celda:
 				cantidad += 1
 		if (i+1) == c:
