@@ -248,3 +248,9 @@ def pruebas():
 
 pruebas()
 main()
+
+
+
+escitor csv.csv_writer(r)
+escritor.writeline(lista)
+csv.dicreader
