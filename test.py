@@ -1,9 +1,7 @@
 """
 Conway's Game of Life
 ---------------------
-
 https://es.wikipedia.org/wiki/Juego_de_la_vida
-
 El "tablero de juego" es una malla formada por cuadrados ("células") que se
 extiende por el infinito en todas las direcciones. Cada célula tiene 8 células
 vecinas, que son las que están próximas a ella, incluidas las diagonales. Las
@@ -12,9 +10,7 @@ células tienen dos estados: están "vivas" o "muertas" (o "encendidas" y
 discretas (se podría decir que por turnos). El estado de todas las células se
 tiene en cuenta para calcular el estado de las mismas al turno siguiente.
 Todas las células se actualizan simultáneamente.
-
 Las transiciones dependen del número de células vecinas vivas:
-
 * Una célula muerta con exactamente 3 células vecinas vivas "nace" (al turno
   siguiente estará viva).
 * Una célula viva con 2 ó 3 células vecinas vivas sigue viva, en otro caso
@@ -51,11 +47,9 @@ def life_crear(mapa):
     """
     Crea el estado inicial de Game of life a partir de una disposición
     representada con los caracteres '.' y '#'.
-
     `mapa` debe ser una lista de cadenas, donde cada cadena representa una
     fila del tablero, y cada caracter puede ser '.' (vacío) o '#' (célula).
     Todas las filas deben tener la misma cantidad decaracteres.
-
     Devuelve el estado del juego, que es una lista de listas donde cada
     sublista representa una fila, y cada elemento de la fila es False (vacío)
     o True (célula).
@@ -63,9 +57,9 @@ def life_crear(mapa):
     resultado = []
     for fila in mapa:
         aux = []
-    	for celda in fila:
-			aux.append(celda == '#')
-    	resultado.append(aux)
+        for caracter in fila:
+            aux.append(caracter == '#')
+        resultado.append(aux)
     return resultado
 
 def pruebas_life_crear():
@@ -83,7 +77,6 @@ def pruebas_life_crear():
 def life_mostrar(life):
     """
     Crea una representación del estado del juego para mostrar en pantalla.
-
     Recibe el estado del juego (inicialmente creado con life_crear()) y
     devuelve una lista de cadenas con la representación del tablero para
     mostrar en la pantalla. Cada una de las cadenas representa una fila
@@ -92,12 +85,12 @@ def life_mostrar(life):
     resultado = []
     for fila in life:
         aux = ""
-    	for celda in fila:
-    	    if celda:
-    	        aux += '#'
-    	    else:
-    	        aux += '.'
-    	resultado.append(aux)
+        for caracter in fila:
+            if caracter:
+                aux += '#'
+            else:
+                aux += '.'
+        resultado.append(aux)
     return resultado
 
 def pruebas_life_mostrar():
@@ -110,77 +103,37 @@ def pruebas_life_mostrar():
 #-----------------------------------------------------------------------------
 
 def cant_adyacentes(life, f, c):
-	"""
-	Calcula la cantidad de células adyacentes a la celda en la fila `f` y la
-	columna `c`.
-
-	Importante: El "tablero" se considera "infinito": las celdas del borde
-	izquierdo están conectadas a la izquierda con las celdas del borde
-	derecho, y viceversa. Las celdas del borde superior están conectadas hacia
-	arriba con las celdas del borde inferior, y viceversa.
-	"""
-	largo_de_la_fila = len(life[f])
-	cant_filas = len(life)
-	cantidad = 0
-	for x,fila in enumerate(life):
-		if x == f:
-			# Cantidad en la misma fila
-			cantidad += chequear_fila(fila,c,)
-		if (x+1) == f:
-			# Cantidad en la fila inferior
-			cantidad += chequear_fila(fila,c)
-			# Si es la ultima fila verificamos la primera
-			if f == (cant_filas-1):
-				aux = life[0]
-				cantidad += chequear_fila(aux,c)
-		if (x-1) == f:
-			# Cantidad en la fila superior
-			cantidad += chequear_fila(fila,c)
-			# Si es la primer fila verificamos la ultima
-			if f == 0:
-				aux = life[cant_filas-1]
-				cantidad += chequear_fila(aux,c)
-	return cantidad - 1
-
-def chequear_fila(fila,c):
-	"""
-	Verifica y cuenta la cantidad de celulas vivas alrededor de una celda 'c' en una fila 'fila'.
-	"""
-	largo_de_la_fila = len(fila)
-	cantidad = 0
-	for i,celda in enumerate(fila):
-		if i == c:
-			if celda:
-				cantidad += 1
-		if (i+1) == c:
-			#Verificamos el estado de la celula izquierda
-			if celda:
-				cantidad += 1
-			# Si es la ultima celda, verificamos la primera
-			if c == (largo_de_la_fila-1):
-				if fila[0]:
-					cantidad += 1
-		if (i-1) == c:
-			#Verificamos el estado de la celula derecha
-			if celda:
-				cantidad += 1
-			# Si es la primer celda, verificamos la ultima
-			if c == 0:
-				if fila[largo_de_la_fila-1]:
-					cantidad += 1
-	return cantidad
+    """
+    Calcula la cantidad de células adyacentes a la celda en la fila `f` y la
+    columna `c`.
+    Importante: El "tablero" se considera "infinito": las celdas del borde
+    izquierdo están conectadas a la izquierda con las celdas del borde
+    derecho, y viceversa. Las celdas del borde superior están conectadas hacia
+    arriba con las celdas del borde inferior, y viceversa.
+    """
+    columnas = len(life[f])
+    filas = len(life)
+    cantidad = 0
+    for x in (-1,0,1):
+        for i in (-1,0,1):
+            if life[(f+x) % filas][(c+i) % columnas]:
+                cantidad += 1
+    # Descontar el centro si es necesario:
+    if life[f][c]:
+        cantidad -= 1
+    return cantidad
 
 def pruebas_cant_adyacentes():
-	"""Prueba el correcto funcionamiento de cant_adyacentes()."""
-	assert cant_adyacentes(life_crear(['.']), 0, 0) == 0
-	assert cant_adyacentes(life_crear(['..', '..']), 0, 0) == 0
-	assert cant_adyacentes(life_crear(['..', '..']), 0, 1) == 0
-	assert cant_adyacentes(life_crear(['##', '..']), 0, 0) == 2
-	assert cant_adyacentes(life_crear(['##', '..']), 0, 1) == 2
-	assert cant_adyacentes(life_crear(['#.', '.#']), 0, 0) == 4
-	assert cant_adyacentes(life_crear(['##', '##']), 0, 0) == 8
-	assert cant_adyacentes(life_crear(['.#.', '#.#', '.#.']), 1, 1) == 4
-	assert cant_adyacentes(life_crear(['.#.', '..#', '.#.']), 1, 1) == 3
+    """Prueba el correcto funcionamiento de cant_adyacentes()."""
+    assert cant_adyacentes(life_crear(['.']), 0, 0) == 0
+    assert cant_adyacentes(life_crear(['..', '..']), 0, 0) == 0
+    assert cant_adyacentes(life_crear(['..', '..']), 0, 1) == 0
+    assert cant_adyacentes(life_crear(['##', '..']), 0, 0) == 2
+    assert cant_adyacentes(life_crear(['##', '..']), 0, 1) == 2
+    assert cant_adyacentes(life_crear(['#.', '.#']), 0, 0) == 4
+    assert cant_adyacentes(life_crear(['##', '##']), 0, 0) == 8
+    assert cant_adyacentes(life_crear(['.#.', '#.#', '.#.']), 1, 1) == 4
+    assert cant_adyacentes(life_crear(['.#.', '..#', '.#.']), 1, 1) == 3
 
 #-----------------------------------------------------------------------------
 
@@ -188,18 +141,13 @@ def celda_siguiente(life, f, c):
     """
     Calcula el estado siguiente de la celda ubicada en la fila `f` y la
     columna `c`.
-
     Devuelve True si en la celda (f, c) habrá una célula en la siguiente
     iteración, o False si la celda quedará vacía.
     """
     celda = life[f][c]
     n = cant_adyacentes(life, f, c)
-    if celda:
-    	if (n == 2) or (n == 3):
-    		return True
-    else:
-    	if (n == 3):
-    		return True
+    if n == 3 or (celda and n == 2):
+        return True
     return False
 
 def pruebas_celda_siguiente():
@@ -219,11 +167,9 @@ def pruebas_celda_siguiente():
 def life_siguiente(life):
     """
     Calcula el siguiente estado del juego.
-
     Recibe el estado actual del juego (lista de listas de False/True) y
     devuelve un _nuevo_ estado que representa la siguiente iteración según las
     reglas del juego.
-
     Importante: El "tablero" se considera "infinito": las celdas del borde
     izquierdo están conectadas a la izquierda con las celdas del borde
     derecho, y viceversa. Las celdas del borde superior están conectadas hacia
@@ -248,9 +194,3 @@ def pruebas():
 
 pruebas()
 main()
-
-
-
-escitor csv.csv_writer(r)
-escritor.writeline(lista)
-csv.dicreader
