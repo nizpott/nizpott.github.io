@@ -1,0 +1,98 @@
+mapa = {}
+
+def main():
+    # User input
+    final_name = input ("nombre?")
+    while True:
+        size_x = input("Ingrese el tamaño en x: ")
+        if size_x.isdigit():
+            size_x = int(size_x)
+            break
+    while True:
+        size_y = input("Ingrese el tamaño en y: ")
+        if size_y.isdigit():
+            size_y = int(size_y)
+            break
+    aux = 0
+    while True:
+        aux ++
+        while True:
+            coor_x = input("Ingrese la coordenada x del monticulo {}: ".format(aux))
+            if coor_x.isdigit():
+                coor_x = int(coor_x)
+                break
+        while True:
+            coor_y = input("Ingrese la coordenada y del monticulo {}: ".format(aux))
+            if coor_y.isdigit():
+                coor_y = int(coor_y)
+                break
+        while True:
+            quantity = input("Ingrese la cantidad de arena del monticulo {}: ".format(aux))
+            if quantity.isdigit():
+                quantity = int(quantity)
+                break
+        mapa[(coor_x,coor_y)] = quantity
+        more = input("¿Desea ingresar otro monticulo? (S/N): ")
+        if not more.upper() == "S":
+            break
+    config = input("Desea personalizar los parametros? (S/N): ")
+    vertical = 1
+    horizontal = 1
+    vertical_mirror = 0
+    horizontal_mirror = 0
+    if config.upper() == "S":
+        while True:
+            vertical = input("Tamano de celda vertical: ")
+            if vertical.isdigit():
+                vertical = int(vertical)
+                break
+        while True:
+            horizontal = input("Tamano de celda vertical: ")
+            if horizontal.isdigit():
+                horizontal = int(horizontal)
+                break
+        while True:
+            vertical_mirror = input("Espejado vertical: ")
+            if vertical_mirror.isdigit():
+                vertical_mirror = int(vertical_mirror)
+                break
+        while True:
+            horizontal_mirror = input("Espejado horizontal: ")
+            if horizontal_mirror.isdigit():
+                horizontal_mirror = int(horizontal_mirror)
+                break
+    # Generate the map
+    while True:
+        repeat = topple(mapa,size_x,size_y)
+        if not repeat:
+            break
+    generate_body(mapa,size_x,size_y,4,4)
+    return
+
+
+def topple(dicc,size_x,size_y):
+    need_to_repeat = False
+    for key in list(dicc.keys()):
+        if dicc[key] > 3:
+            value = dicc[key] // 4
+            mapa[key] = dicc[key] % 4 # Update current field
+            left = (key[0]-1,key[1])
+            right = (key[0]+1,key[1])
+            up = (key[0],key[1]-1)
+            down = (key[0],key[1]+1)
+            for coor in (left,right,up,down):
+                # Not need for coordinates outside the limits
+                if coor[0] >= 0 and coor[1] >= 0 and coor[0] <= size_x and coor[1] <= size_y:
+                    old = mapa.get(coor,0)
+                    mapa[coor] = old + value # Add the new value
+                    if (old + value) > 3:
+                        need_to_repeat = True
+    return need_to_repeat
+
+def generate_body(dicc,size_x,size_y,vertical,horizontal):
+    for x in range(1,size_x+1):
+        for y in range(1,size_y+1):
+            print dicc.get((x,y),0)
+    return
+
+main()
