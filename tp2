@@ -2,6 +2,7 @@ mapa = {}
 
 def main():
     # User input
+    colour_list= {"Blanco":"255 255 255"}
     final_name = input ("nombre?")
     while True:
         size_x = input("Ingrese el tamaño en x: ")
@@ -61,20 +62,21 @@ def main():
             if horizontal_mirror.isdigit():
                 horizontal_mirror = int(horizontal_mirror)
                 break
+        conf_colour = input("Desea personalizar los colores? (S/N): ")
+        if conf_colour.upper() == "S":
+            for n in (0,1,2,3):
+                print()
+                input("Elija el color del {}:".format(n))
+        else:
+            colours = ["0 0 0","255 0 255","255 0 0","255 255 0"]
     # Generate the map
     while True:
         repeat = topple(mapa,size_x,size_y)
         if not repeat:
             break
-    color0 = "0 0 0"
-    color1 = "255 0 255"
-    color2 = "255 0 0"
-    color3 = "255 255 0"
     colours = [color0,color1,color2,color3]
     generate_body(mapa,colours,size_x,size_y,4,4)
     return
-
-
 
 def topple(dicc,size_x,size_y):
     need_to_repeat = False
@@ -95,14 +97,13 @@ def topple(dicc,size_x,size_y):
                         need_to_repeat = True
     return need_to_repeat
 
-def generate_body(dicc,colours,size_x,size_y,horizontal=1,vertical=1):
+def generate_body(dicc,colours,size_x,size_y,horizontal,vertical):
     text = ""
-    for x in range(1,size_x+1):
-        for y in range(1,size_y+1):
-            for pixel in range(0,horizontal):
-                text += str(colours[dicc.get((x,y),0)])+"\n"
-    print text
-    return
+    for y in range(0,size_y):
+        for pixels in range(0,vertical):
+            for x in range(0,size_x):
+                text += (str(colours[dicc.get((x,y),0)])+"\n" * horizontal)
+    return text
 
 def generate_head(size_x,size_y,horizontal,vertical):
     text = "P3\n"
