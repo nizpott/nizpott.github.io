@@ -1,8 +1,12 @@
-mapa = {}
+MAPA = {}
 
 def main():
+    """
+
+    Includes user interfase.
+    """
     # User input
-    colour_list= {"Blanco":"255 255 255"}
+    colour_list= {"BLANCO":"255 255 255","NEGRO":"0 0 0","MAGENTA":"255 0 255","AMARILLO":"255 255 0","ROJO":"255 0 0","VERDE":"0 255 0","AZUL": "0 0 255"}
     final_name = input ("nombre?")
     while True:
         size_x = input("Ingrese el tamaño en x: ")
@@ -16,7 +20,7 @@ def main():
             break
     aux = 0
     while True:
-        aux ++
+        aux += 1
         while True:
             coor_x = input("Ingrese la coordenada x del monticulo {}: ".format(aux))
             if coor_x.isdigit():
@@ -32,7 +36,7 @@ def main():
             if quantity.isdigit():
                 quantity = int(quantity)
                 break
-        mapa[(coor_x,coor_y)] = quantity
+        MAPA[(coor_x,coor_y)] = quantity
         more = input("¿Desea ingresar otro monticulo? (S/N): ")
         if not more.upper() == "S":
             break
@@ -41,6 +45,7 @@ def main():
     horizontal = 1
     vertical_mirror = 0
     horizontal_mirror = 0
+    colours = []
     if config.upper() == "S":
         while True:
             vertical = input("Tamano de celda vertical: ")
@@ -48,7 +53,7 @@ def main():
                 vertical = int(vertical)
                 break
         while True:
-            horizontal = input("Tamano de celda vertical: ")
+            horizontal = input("Tamano de celda horizontal: ")
             if horizontal.isdigit():
                 horizontal = int(horizontal)
                 break
@@ -64,26 +69,41 @@ def main():
                 break
         conf_colour = input("Desea personalizar los colores? (S/N): ")
         if conf_colour.upper() == "S":
+            print("Colores disponibles:")
+            print(colour_list.keys())
             for n in (0,1,2,3):
-                print()
-                input("Elija el color del {}:".format(n))
+                while True:
+                    selected = input("Escriba el color que representa el {}:".format(n))
+                    if selected.upper() in colour_list:
+                        colours.append(colour_list[selected.upper()])
+                        break
+                    print("Por favor, escriba un color de la lista")
         else:
             colours = ["0 0 0","255 0 255","255 0 0","255 255 0"]
     # Generate the map
     while True:
-        repeat = topple(mapa,size_x,size_y)
+        repeat = topple(MAPA,size_x,size_y)
         if not repeat:
             break
-    colours = [color0,color1,color2,color3]
-    generate_body(mapa,colours,size_x,size_y,4,4)
+    file_content = generate_head(size_x,size_y,horizontal,vertical)
+    file_content += generate_body(MAPA,colours,size_x,size_y,horizontal,vertical)
     return
 
 def topple(dicc,size_x,size_y):
+    """
+    Topple a coordinate map using sandpiles method. Receives a map and update the global variable that cointain it.
+    Params:
+        dicc (dictionary) Contains coordinate map to topple
+        size_x (int) Size of x coordinates
+        size_y (int) Size of y coordinates
+    Return:
+        bool: True if there is a field with more than 3 sands. False otherwise.
+    """
     need_to_repeat = False
     for key in list(dicc.keys()):
         if dicc[key] > 3:
             value = dicc[key] // 4
-            mapa[key] = dicc[key] % 4 # Update current field
+            MAPA[key] = dicc[key] % 4 # Update current field
             left = (key[0]-1,key[1])
             right = (key[0]+1,key[1])
             up = (key[0],key[1]-1)
@@ -91,14 +111,28 @@ def topple(dicc,size_x,size_y):
             for coor in (left,right,up,down):
                 # Not need for coordinates outside the limits
                 if coor[0] >= 0 and coor[1] >= 0 and coor[0] <= size_x and coor[1] <= size_y:
-                    old = mapa.get(coor,0)
-                    mapa[coor] = old + value # Add the new value
+                    old = MAPA.get(coor,0)
+                    MAPA[coor] = old + value # Add the new value
                     if (old + value) > 3:
                         need_to_repeat = True
     return need_to_repeat
 
 def generate_body(dicc,colours,size_x,size_y,horizontal,vertical):
+    """
+    Generate the body text to add in a ppm file.
+    Params:
+        dicc (dictionary) Contains coordinate map to transform
+        colours (list) Contains four colours, correspond to 0,1,2 and 3 respectively
+        size_x (int) Size of x coordinates
+        size_y (int) Size of y coordinates
+        horizontal (int) Pixels for each x coordinate
+        vertical (int) Pixels for each y coordinate
+    Return:
+        string: Text of the body
+    """
     text = ""
+    if not len(colours) == 4:
+        return False
     for y in range(0,size_y):
         for pixels in range(0,vertical):
             for x in range(0,size_x):
@@ -106,10 +140,17 @@ def generate_body(dicc,colours,size_x,size_y,horizontal,vertical):
     return text
 
 def generate_head(size_x,size_y,horizontal,vertical):
-    text = "P3\n"
-    text += str(size_x*horizontal)+" "+str(size_y*vertical)+"\n"
-    text += "255\n"
-    return text
+    """
+    Generate the head text to add in a ppm file.
+    Params:
+        size_x (int) Size of x coordinates
+        size_y (int) Size of y coordinates
+        horizontal (int) Pixels for each x coordinate
+        vertical (int) Pixels for each y coordinate
+    Return:
+        string: Text of the head
+    """
+    return "P3\n"+str(size_x*horizontal)+" "+str(size_y*vertical)+"\n"+"255\n"
 
 
 main()
