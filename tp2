@@ -87,6 +87,7 @@ def main():
             break
     file_content = generate_head(size_x,size_y,horizontal,vertical)
     file_content += generate_body(MAPA,colours,size_x,size_y,horizontal,vertical)
+    write(final_name,file_content)
     return
 
 def topple(dicc,size_x,size_y):
@@ -152,5 +153,11 @@ def generate_head(size_x,size_y,horizontal,vertical):
     """
     return "P3\n"+str(size_x*horizontal)+" "+str(size_y*vertical)+"\n"+"255\n"
 
+def write(name,content):
+    final_name = name + ".ppm"
+    with open(final_name,"w") as f:
+        f.write(content)
+        return True
+    return False
 
 main()
