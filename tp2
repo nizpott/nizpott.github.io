@@ -37,7 +37,7 @@ def main():
                 quantity = int(quantity)
                 break
         MAPA[(coor_x,coor_y)] = quantity
-        more = input("¿Desea ingresar otro monticulo? (S/N): ")
+        more = input("Desea ingresar otro monticulo? (S/N): ")
         if not more.upper() == "S":
             break
     config = input("Desea personalizar los parametros? (S/N): ")
@@ -45,7 +45,7 @@ def main():
     horizontal = 1
     vertical_mirror = 0
     horizontal_mirror = 0
-    colours = []
+    colours = ["0 0 0","255 0 255","255 0 0","255 255 0"]
     if config.upper() == "S":
         while True:
             vertical = input("Tamano de celda vertical: ")
@@ -69,6 +69,7 @@ def main():
                 break
         conf_colour = input("Desea personalizar los colores? (S/N): ")
         if conf_colour.upper() == "S":
+            colours = []
             print("Colores disponibles:")
             print(colour_list.keys())
             for n in (0,1,2,3):
@@ -78,16 +79,18 @@ def main():
                         colours.append(colour_list[selected.upper()])
                         break
                     print("Por favor, escriba un color de la lista")
-        else:
-            colours = ["0 0 0","255 0 255","255 0 0","255 255 0"]
     # Generate the map
+    print("Procesando, espere por favor...")
     while True:
         repeat = topple(MAPA,size_x,size_y)
         if not repeat:
             break
-    file_content = generate_head(size_x,size_y,horizontal,vertical)
-    file_content += generate_body(MAPA,colours,size_x,size_y,horizontal,vertical)
+    head = generate_head(size_x,size_y,horizontal,vertical)
+    body_list = generate_body(MAPA,colours,size_x,size_y,horizontal,vertical)
+    body = mirror(body_list,horizontal_mirror,vertical_mirror)
+    file_content = generate_text(head,body)
     write(final_name,file_content)
+    print("Final")
     return
 
 def topple(dicc,size_x,size_y):
@@ -123,7 +126,7 @@ def generate_body(dicc,colours,size_x,size_y,horizontal,vertical):
     Generate the body text to add in a ppm file.
     Params:
         dicc (dictionary) Contains coordinate map to transform
-        colours (list) Contains four colours, correspond to 0,1,2 and 3 respectively
+        colours (list) Contains four colours, correspond to 0,1,2,3 respectively
         size_x (int) Size of x coordinates
         size_y (int) Size of y coordinates
         horizontal (int) Pixels for each x coordinate
@@ -131,14 +134,17 @@ def generate_body(dicc,colours,size_x,size_y,horizontal,vertical):
     Return:
         string: Text of the body
     """
-    text = ""
+    y_list = []
+    x_list = []
     if not len(colours) == 4:
         return False
     for y in range(0,size_y):
-        for pixels in range(0,vertical):
+        for v in range(0,vertical):
             for x in range(0,size_x):
-                text += (str(colours[dicc.get((x,y),0)])+"\n" * horizontal)
-    return text
+                for h in range(0,horizontal):
+                    x_list.append(str(colours[dicc.get((x,y),0)])+"\n")
+            y_list.append(x_list)
+    return y_list
 
 def generate_head(size_x,size_y,horizontal,vertical):
     """
@@ -153,11 +159,31 @@ def generate_head(size_x,size_y,horizontal,vertical):
     """
     return "P3\n"+str(size_x*horizontal)+" "+str(size_y*vertical)+"\n"+"255\n"
 
+def generate_text(head,body_list):
+    text = head
+    for sub_list in body_list:
+        for pixel in sub_list:
+            text += pixel
+    return text
+
 def write(name,content):
     final_name = name + ".ppm"
     with open(final_name,"w") as f:
         f.write(content)
         return True
     return False
+
+def mirror(body,horizontal,vertical):
+    mirrors = []
+    for i in range(1,horizontal):
+        for y in body:
+            aux = y[::-1]
+            mirrors.append(aux)
+    for i in range(1,vertical):
+        for y in body:
+            aux = body[::-1]
+            mirrors.append(aux)
+    body.extend(mirrors)
+    return body
 
 main()
