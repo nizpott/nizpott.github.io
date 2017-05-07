@@ -45,7 +45,7 @@ def main():
     horizontal = 1
     vertical_mirror = 1
     horizontal_mirror = 1
-    colours = ["0 0 0","255 0 255","255 0 0","255 255 0"]
+    colours = ["0 0 0","255 0 255","255 0 0","255 255 0"] # Default colours
     if config.upper() == "S":
         while True:
             vertical = input("Tamano de celda vertical: ")
@@ -87,11 +87,11 @@ def main():
             break
     print("GENERATING")
     head = generate_head(size_x,size_y,horizontal,vertical,horizontal_mirror,vertical_mirror)
-    body_list = generate_body(MAPA,colours,size_x,size_y,horizontal,vertical)
+    body_list = generate_body(MAPA,colours,size_x,size_y)
     print("mirorr")
     body = mirror(body_list,horizontal_mirror,vertical_mirror)
     print("generatin text")
-    file_content = generate_text(head,body)
+    file_content = generate_text(head,body,horizontal,vertical)
     print("Writing")
     write(final_name,file_content)
     print("Final")
@@ -125,7 +125,7 @@ def topple(dicc,size_x,size_y):
                         need_to_repeat = True
     return need_to_repeat
 
-def generate_body(dicc,colours,size_x,size_y,horizontal,vertical):
+def generate_body(dicc,colours,size_x,size_y):
     """
     Generate the body text to add in a ppm file.
     Params:
@@ -143,11 +143,9 @@ def generate_body(dicc,colours,size_x,size_y,horizontal,vertical):
     if not len(colours) == 4:
         return False
     for y in range(0,size_y):
-        for v in range(0,vertical):
-            for x in range(0,size_x):
-                for h in range(0,horizontal):
-                    x_list.append(str(colours[dicc.get((x,y),0)])+"\n")
-            y_list.append(x_list)
+        for x in range(0,size_x):
+            x_list.append("\n"+str(colours[dicc.get((x,y),0)]))
+        y_list.append(x_list)
     return y_list
 
 def generate_head(size_x,size_y,horizontal,vertical,h_mirror,v_mirror):
@@ -161,13 +159,16 @@ def generate_head(size_x,size_y,horizontal,vertical,h_mirror,v_mirror):
     Return:
         string: Text of the head
     """
-    return "P3\n"+str(size_x*horizontal*h_mirror)+" "+str(size_y*vertical*v_mirror)+"\n"+"255\n"
+    return "P3\n"+str(size_x*horizontal*h_mirror)+" "+str(size_y*vertical*v_mirror)+"\n255"
 
-def generate_text(head,body_list):
+def generate_text(head,body_list,horizontal,vertical):
     text = head
+    print(horizontal,vertical,len(body_list),len(body_list[0]))
     for sub_list in body_list:
-        for pixel in sub_list:
-            text += pixel
+        for v in range(0,vertical):
+            for pixel in sub_list:
+                for h in range(0,horizontal):
+                    text += pixel
     return text
 
 def write(name,content):
@@ -177,13 +178,13 @@ def write(name,content):
     return
 
 def mirror(body,horizontal,vertical):
-    mirrors = []
     for i in range(1,horizontal):
+        mirrors = []
         for y in body:
             aux = y[::-1]
             mirrors.append(aux)
-    for e,m in enumerate(mirrors):
-        body[e].extend(mirrors[e])
+        for e,m in enumerate(mirrors):
+            body[e].extend(mirrors[e])
     mirrors = []
     for i in range(1,vertical):
         for y in body:
