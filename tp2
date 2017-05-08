@@ -1,13 +1,12 @@
-MAPA = {}
+MAPA = {} # Global variable
 
 def main():
     """
-
-    Includes user interfase.
+    Primary function of the program. Includes user interface.
     """
     # User input
     colour_list= {"BLANCO":"255 255 255","NEGRO":"0 0 0","MAGENTA":"255 0 255","AMARILLO":"255 255 0","ROJO":"255 0 0","VERDE":"0 255 0","AZUL": "0 0 255"}
-    final_name = input ("nombre?")
+    final_name = input ("Ingrese del nombre del archivo sin extencion: ")
     while True:
         size_x = input("Ingrese el tamaño en x: ")
         if size_x.isdigit():
@@ -48,12 +47,12 @@ def main():
     colours = ["0 0 0","255 0 255","255 0 0","255 255 0"] # Default colours
     if config.upper() == "S":
         while True:
-            vertical = input("Tamano de celda vertical: ")
+            vertical = input("Tamaño de celda vertical: ")
             if vertical.isdigit():
                 vertical = int(vertical)
                 break
         while True:
-            horizontal = input("Tamano de celda horizontal: ")
+            horizontal = input("Tamaño de celda horizontal: ")
             if horizontal.isdigit():
                 horizontal = int(horizontal)
                 break
@@ -85,14 +84,12 @@ def main():
         repeat = topple(MAPA,size_x,size_y)
         if not repeat:
             break
-    print("GENERATING")
+    # Generate the content of the file
     head = generate_head(size_x,size_y,horizontal,vertical,horizontal_mirror,vertical_mirror)
     body_list = generate_body(MAPA,colours,size_x,size_y)
-    print("mirorr")
     body = mirror(body_list,horizontal_mirror,vertical_mirror)
-    print("generatin text")
     file_content = generate_text(head,body,horizontal,vertical)
-    print("Writing")
+    # Write into the file
     write(final_name,file_content)
     print("Final")
     return
@@ -116,7 +113,7 @@ def topple(dicc,size_x,size_y):
             right = (key[0]+1,key[1])
             up = (key[0],key[1]-1)
             down = (key[0],key[1]+1)
-            for coor in (left,right,up,down):
+            for coor in (left,right,up,down): 
                 # Not need for coordinates outside the limits
                 if coor[0] >= 0 and coor[1] >= 0 and coor[0] <= size_x and coor[1] <= size_y:
                     old = MAPA.get(coor,0)
@@ -127,22 +124,20 @@ def topple(dicc,size_x,size_y):
 
 def generate_body(dicc,colours,size_x,size_y):
     """
-    Generate the body text to add in a ppm file.
+    Generate the body to add in a ppm file.
     Params:
         dicc (dictionary) Contains coordinate map to transform
         colours (list) Contains four colours, correspond to 0,1,2,3 respectively
         size_x (int) Size of x coordinates
         size_y (int) Size of y coordinates
-        horizontal (int) Pixels for each x coordinate
-        vertical (int) Pixels for each y coordinate
     Return:
-        string: Text of the body
+        list: List of lists of the body
     """
     y_list = []
-    x_list = []
     if not len(colours) == 4:
         return False
     for y in range(0,size_y):
+        x_list = []
         for x in range(0,size_x):
             x_list.append("\n"+str(colours[dicc.get((x,y),0)]))
         y_list.append(x_list)
@@ -156,14 +151,25 @@ def generate_head(size_x,size_y,horizontal,vertical,h_mirror,v_mirror):
         size_y (int) Size of y coordinates
         horizontal (int) Pixels for each x coordinate
         vertical (int) Pixels for each y coordinate
+        h_mirror (int) Times to mirror in horizontal
+        v_mirror (int) Times to mirror in vertical
     Return:
         string: Text of the head
     """
     return "P3\n"+str(size_x*horizontal*h_mirror)+" "+str(size_y*vertical*v_mirror)+"\n255"
 
 def generate_text(head,body_list,horizontal,vertical):
+    """
+    Create the final content of a ppm file.
+    Params:
+        head (string) Text for the header
+        body_list (list) List of lists, than represent the body.
+        horizontal (int) Pixels for each x coordinate
+        vertical (int) Pixels for each y coordinate
+    Return:
+        string: Full content of the ppm file 
+    """
     text = head
-    print(horizontal,vertical,len(body_list),len(body_list[0]))
     for sub_list in body_list:
         for v in range(0,vertical):
             for pixel in sub_list:
@@ -172,12 +178,25 @@ def generate_text(head,body_list,horizontal,vertical):
     return text
 
 def write(name,content):
+    """ 
+    Write or create a ppm file and insert the content.
+    Params:
+        name (string) Name of the file (without extension)
+        content (string) Content to write in the file
+    """
     final_name = name + ".ppm"
     with open(final_name,"w") as f:
         f.write(content)
     return
 
 def mirror(body,horizontal,vertical):
+    """
+    Mirror the image in horizontal and vertical form
+    Params:
+        body (list) List of lists, than represent the body.
+        horizontal (int) Times to mirror in horizontal
+        vertical (int) Times to mirror in vertical
+    """
     for i in range(1,horizontal):
         mirrors = []
         for y in body:
@@ -187,8 +206,7 @@ def mirror(body,horizontal,vertical):
             body[e].extend(mirrors[e])
     mirrors = []
     for i in range(1,vertical):
-        for y in body:
-            aux = body[::-1]
+        aux = body[::-1]
         mirrors.extend(aux)
     body.extend(mirrors)
     return body
