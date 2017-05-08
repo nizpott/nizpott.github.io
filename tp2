@@ -1,10 +1,8 @@
-MAPA = {} # Global variable
-
 def main():
     """
     Primary function of the program. Includes user interface.
     """
-    MAPA.clear()
+    coordinates = {} # Global variable
     # User input
     colour_list= {"BLANCO":"255 255 255","NEGRO":"0 0 0","MAGENTA":"255 0 255","AMARILLO":"255 255 0","ROJO":"255 0 0","VERDE":"0 255 0","AZUL": "0 0 255"}
     final_name = input ("Ingrese del nombre del archivo sin extencion: ")
@@ -36,7 +34,7 @@ def main():
             if quantity.isdigit():
                 quantity = int(quantity)
                 break
-        MAPA[(coor_x,coor_y)] = quantity
+        coordinates[(coor_x,coor_y)] = quantity
         more = input("Desea ingresar otro monticulo? (S/N): ")
         if not more.upper() == "S":
             break
@@ -82,12 +80,12 @@ def main():
     # Generate the map
     print("Procesando, espere por favor...")
     while True:
-        repeat = topple(MAPA,size_x,size_y)
+        coordinates,repeat = topple(coordinates,size_x,size_y)
         if not repeat:
             break
     # Generate the content of the file
     head = generate_head(size_x,size_y,horizontal,vertical,horizontal_mirror,vertical_mirror)
-    body_list = generate_body(MAPA,colours,size_x,size_y)
+    body_list = generate_body(coordinates,colours,size_x,size_y)
     body = mirror(body_list,horizontal_mirror,vertical_mirror)
     file_content = generate_text(head,body,horizontal,vertical)
     # Write into the file
@@ -95,40 +93,38 @@ def main():
     print("Final")
     return
 
-def topple(dicc,size_x,size_y):
+def topple(coordinates,size_x,size_y):
     """
-    Topple a coordinate map using sandpiles method. Receives a map and update the global variable that cointain it.
+    Topple a given coordinate map using sandpiles method. Also, return if the map needs to be topple again.
     Params:
-        dicc (dictionary) Contains coordinate map to topple
+        coordinates (dictionary) Contains coordinate map to topple
         size_x (int) Size of x coordinates
         size_y (int) Size of y coordinates
     Return:
+        dictionary: The coordinate map after the topple
         bool: True if there is a field with more than 3 sands. False otherwise.
     """
     need_to_repeat = False
-    for key in list(dicc.keys()):
-        if dicc[key] > 3:
-            value = dicc[key] // 4
-            MAPA[key] = dicc[key] % 4 # Update current field
-            left = (key[0]-1,key[1])
-            right = (key[0]+1,key[1])
-            up = (key[0],key[1]-1)
-            down = (key[0],key[1]+1)
-            for coor in (left,right,up,down): 
+    for key in list(coordinates.keys()):
+        if coordinates[key] > 3:
+            value = coordinates[key] // 4
+            coordinates[key] = coordinates[key] % 4 # Update current field
+            # for coor in (left,right,up,down)
+            for coor in ((key[0]-1,key[1]), (key[0]+1,key[1]), (key[0],key[1]-1), (key[0],key[1]+1)): 
                 # Not need for coordinates outside the limits
                 if coor[0] >= 0 and coor[1] >= 0 and coor[0] <= size_x and coor[1] <= size_y:
-                    old = MAPA.get(coor,0)
-                    MAPA[coor] = old + value # Add the new value
+                    old = coordinates.get(coor,0)
+                    coordinates[coor] = old + value # Add the new value
                     if (old + value) > 3:
                         need_to_repeat = True
-    return need_to_repeat
+    return coordinates,need_to_repeat
 
-def generate_body(dicc,colours,size_x,size_y):
+def generate_body(coordinates,colours,size_x,size_y):
     """
-    Generate the body to add in a ppm file.
+    Generate the body to add in a ppm file. Every list represent a horizontal line, wich includes a list with every bit on it.
     Params:
-        dicc (dictionary) Contains coordinate map to transform
-        colours (list) Contains four colours, correspond to 0,1,2,3 respectively
+        coordinates (dictionary) Contains coordinate map to transform
+        colours (list) Must contain four colours, correspond to 0,1,2,3 respectively
         size_x (int) Size of x coordinates
         size_y (int) Size of y coordinates
     Return:
@@ -140,7 +136,7 @@ def generate_body(dicc,colours,size_x,size_y):
     for y in range(0,size_y):
         x_list = []
         for x in range(0,size_x):
-            x_list.append("\n"+str(colours[dicc.get((x,y),0)]))
+            x_list.append("\n"+str(colours[coordinates.get((x,y),0)]))
         y_list.append(x_list)
     return y_list
 
@@ -198,18 +194,18 @@ def mirror(body,horizontal,vertical):
         horizontal (int) Times to mirror in horizontal
         vertical (int) Times to mirror in vertical
     """
-    for i in range(1,horizontal):
+    for i in range(1,horizontal): # Times to mirror in horizontal
         mirrors = []
-        for y in body:
-            aux = y[::-1]
+        for y in body: # Reed every "line" to be reversed
+            aux = y[::-1] # as reverse()
             mirrors.append(aux)
         for e,m in enumerate(mirrors):
-            body[e].extend(mirrors[e])
+            body[e].extend(mirrors[e]) # Merge both lists
     mirrors = []
-    for i in range(1,vertical):
-        aux = body[::-1]
+    for i in range(1,vertical): # Times to mirror in vertical
+        aux = body[::-1] # as reverse()
         mirrors.extend(aux)
-    body.extend(mirrors)
+    body.extend(mirrors) # Merge both lists
     return body
 
 main()
